@@ -1,0 +1,19 @@
+{
+  "name": "docloop-client",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/docLoop/client.git"
+  },
+  "author": "Andreas Pittrich",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/docLoop/client/issues"
+  },
+  "homepage": "https://github.com/docLoop/client#readme"
+}

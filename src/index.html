@@ -1,0 +1,345 @@
+<!doctype html>
+
+<html ng-app = "docloop">
+	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.min.js"></script>
+
+		<script>
+			var backend_url = 'http://127.0.0.1:7777'
+
+			angular.module("docloop", [])
+			.service('dpApi', [
+
+				'$http',
+
+				function($http){
+					this.getTargets = function(adapter_id){
+						return 	$http.get(backend_url+'/adapters/'+adapter_id+'/targets')
+					}
+
+					this.saveLink = function(source, target){
+						return 	$http.post(backend_url+'/link', {source: source, target, target})
+					}
+
+					this.getAdapterStats = function(adapter_id){
+						return 	$http.get(backend_url+'/adapters/'+adapter_id)
+								.then(function(result){ return result.data})
+					}
+
+					this.getLinks = function(){
+						return	$http.get(backend_url+'/link')
+								.then(function(result){ return result.data})
+					}
+
+					this.deleteLink = function(id){
+						return 	$http.delete(backend_url+'/link/'+id)
+								.then(result => result.data)
+					}
+				}
+			])
+			.controller('linkCtrl', [
+
+				'$scope',
+				'dpApi',
+
+				function($scope, dpApi){
+					$scope.link = { source: undefined, target: undefined }
+					$scope.targets = {}
+
+
+
+					$scope.getTargets = function(adapter_id){
+						return 	dpApi.getTargets(adapter_id)
+								.then(function(result){
+									$scope.targets[adapter_id] = result.data
+								})
+					}
+
+					$scope.getLinks = function(){
+						dpApi.getLinks()
+						.then(function(links){
+							$scope.links = links
+						})
+					}
+
+					$scope.saveLink = function(){
+						console.log($scope.link)
+						return 	dpApi.saveLink($scope.link.source, $scope.link.target)
+								.then(
+									function(result){
+										$scope.result = result.data
+										$scope.getLinks()
+									},
+									function(err){
+										$scope.result = err.data
+									})
+					}
+
+					$scope.deleteLink = function(id){
+						dpApi.deleteLink(id)
+						.then($scope.getLinks)
+					}
+
+					$scope.getStats = function(adapter_id){
+						$scope.adapters = $scope.adapters || {}
+						$scope.adapters[adapter_id] = $scope.adapters[adapter_id] || {}
+						$scope.adapters[adapter_id].loading = true
+
+						$scope.adapter
+						return  dpApi.getAdapterStats(adapter_id)
+								.then(function(stats){
+									$scope.adapters[adapter_id] = stats
+								})
+					}
+
+					$scope.guessPaperhiveDocumentId = function(str){
+						var matches = str.match(/https:\/\/paperhive.org\/documents\/([^\/]+)/)
+
+						return 	(matches && matches[1]) || str
+					}
+
+					var loginWithgithubInterval
+
+					$scope.loginWithGithub = function(){
+						var new_window 	= 	window.open('https://github.com/login/oauth/authorize?scope=read:org&client_id=Iv1.a17e462d9573b808', '_blank')
+
+						new_window.focus()
+
+						$scope.adapters = $scope.adapters || {}
+						$scope.adapters['github'] = $scope.adapters['github'] || {}
+						$scope.adapters['github'].waitingForAuthorization = true
+
+						loginWithgithubInterval	=	window.setInterval(function(){
+												try{
+													if(new_window.authorizationComplete){
+														window.clearInterval(loginWithgithubInterval)
+														window.focus()
+														new_window.close()
+														$scope.getStats('github')
+														$scope.getLinks()
+													}
+												} catch(e) {}
+											}, 600)
+					}
+
+					$scope.cancelLoginWithGithub = function(){
+						window.clearInterval(loginWithgithubInterval)
+						$scope.getStats('github')
+					}
+						
+					$scope.getStats('github')
+					$scope.getStats('paperhive')
+
+					$scope.getLinks()
+
+
+				}
+			])
+
+			.run([
+				"$rootScope",
+
+				function($rootScope){
+
+				}
+
+			])
+
+		</script>
+
+		<style>
+			body > section {
+				display:			flex;
+				justify-content: 	space-between;
+				flex-wrap:			wrap;
+				font-family:		sans-serif;
+			}
+
+			ul {
+				list-style:			none;
+				padding:			0;
+			}
+
+			.links {
+				flex:				1 0 100%;
+			}
+
+			.link {
+				position:			relative;
+				display:			flex;
+				flex:				0 0 100%;
+				text-align:			center;
+				line-height:		2rem;
+				flex-wrap:			wrap;
+				Justify-content:	center;
+			}
+
+
+			.link  > *{
+				flex:				1 0 0;
+			}
+
+			.link  .arrow {
+				flex:				0 0 auto;
+			}
+
+			.result {
+				flex:				0 0 100%;
+				text-align:			center;
+			}
+
+			.sources {
+				flex:				1 1 0;
+				max-width:			30rem;
+			}
+
+			.targets {
+				flex:				1 1 0;
+				max-width:			30rem;
+			}
+
+			.targets img {
+				float:				left;
+			}
+
+			.targets h4 {
+				margin:				0;
+				margin-bottom:		0.5rem;
+				font-size:			1.3rem;
+				font-weight:		bold;
+			}
+
+
+
+			.targets h5 {
+				margin:				0;
+				margin-bottom:		0.5rem;
+				font-size:			1.2rem;
+				font-weight:		normal;
+			}
+
+			.targets .user {
+				overflow:			hidden;
+			}
+
+			.targets .user:after {
+				content:			'';
+				clear:				both;
+			}
+
+
+			.targets li button {
+				display:			inline-block;
+				width:				20rem;
+				cursor:				pointer;
+			}
+
+		</style>
+
+	</head>
+
+	<body>
+		<section ng-controller = "linkCtrl">
+
+			
+
+			<div class = "link">
+				<div class ="source">{{link.source.document_id}}</div>
+				<div class ="arrow"> =>	</div> 
+				<div class ="target"> <span ng-if = "link.target">{{link.target.owner}}/{{link.target.repo}}</span> </div>
+			</div>
+			<div class ="result">
+				<button	ng-click = "saveLink()">
+					saveLink
+				</button>
+
+				<div class ="result">{{result}}</div>
+			</div>
+
+			<div class = "sources">
+				<h3>Paperhive</h3>
+				Enter the url or the id of a paperhive document:
+				<form ng-submit = "link.source = {adapter:'paperhive', document_id: guessPaperhiveDocumentId(document_id)}">
+					<input type  = "text" ng-model = "document_id" placeholder ="url or id"/><br/>
+					<button type = "submit">set source</button>
+				</form>
+			</div>
+
+			<div class = "targets">
+				<div class = "github">
+					<h3>Github</h3>
+
+					<div ng-if = "!adapters.github.loading">
+						<a 
+							ng-if 		= "!adapters.github.data.user"
+							ng-click 	= "loginWithGithub()"
+						>
+							authorize github app
+						</a>
+
+
+						<div 
+							ng-if = "adapters.github.data.user"
+							class = "user"
+						>
+							<img ng-src = "{{adapters.github.data.user.avatar_url}}"/>
+							<h4>{{adapters.github.data.user.name}}</h4> 
+							<h5>{{adapters.github.data.user.login}}</h5>
+						</div>
+
+						Select a repository to pipe annotations to:
+
+						<ul ng-if = "adapters.github.data.repos.length">
+							<li
+								ng-repeat 	= "repo in adapters.github.data.repos"
+							>
+								<button
+									ng-click 	= "link.target = repo.target"
+								>
+									{{repo.full_name}} 
+								</button>
+								<a ng-href = "{{repo.html_url}}">goto repo</a>
+							</li>
+						</ul>
+					</div>
+
+					<div ng-if = "adapters.github.loading">
+						loading...
+					</div>
+
+					<div ng-show = "adapters.github.waitingForAuthorization">
+						waiting for authorization... <br/>
+						(check new window/tab)
+						<button ng-click ="cancelLoginWithGithub()">cancel</button>
+					</div>
+
+				</div>
+			</div>
+			
+			<div class = "links">
+				<h2>Links</h2>
+
+				<div ng-if = "!links || !links.length">
+					No links established yet.
+				</div>
+
+				<div 
+					ng-repeat 	= "link in links"
+					class		= "link"
+				>
+					<div class ="source">{{link.source.document_id}}</div> 
+					<div 
+						class ="arrow" 
+						ng-click = "deleteLink(link._id)" 
+						style = "color:red; cursor:pointer"
+						title = "remove Link"
+					> 
+						---/--> 
+					</div> 
+					<div class ="target">{{link.target.owner}}/{{link.target.repo}}</div>
+				</div>
+			</div>
+
+		</section>
+	</body>
+</html>

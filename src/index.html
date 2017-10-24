@@ -8,6 +8,9 @@
 			var backend_url = 'http://127.0.0.1:7777'
 
 			angular.module("docloop", [])
+			.config(function ($httpProvider) {
+				$httpProvider.defaults.withCredentials = true;
+			})
 			.service('dpApi', [
 
 				'$http',
@@ -23,17 +26,17 @@
 
 					this.getAdapterStats = function(adapter_id){
 						return 	$http.get(backend_url+'/adapters/'+adapter_id)
-								.then(function(result){ return result.data})
+								.then(function(result){ return result ? result.data : {}})
 					}
 
 					this.getLinks = function(){
 						return	$http.get(backend_url+'/link')
-								.then(function(result){ return result.data})
+								.then(function(result){ return result?  result.data : []})
 					}
 
 					this.deleteLink = function(id){
 						return 	$http.delete(backend_url+'/link/'+id)
-								.then(result => result.data)
+								.then(result => result ? result.data : {})
 					}
 				}
 			])

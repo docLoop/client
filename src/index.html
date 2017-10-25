@@ -4,6 +4,8 @@
 	<head>
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.min.js"></script>
 
+		<script src="config.js"></script>
+
 		<script>
 			var backend_url = 'http://127.0.0.1:7777'
 
@@ -104,7 +106,7 @@
 					var loginWithgithubInterval
 
 					$scope.loginWithGithub = function(){
-						var new_window 	= 	window.open('https://github.com/login/oauth/authorize?scope=read:org&client_id=Iv1.a17e462d9573b808', '_blank')
+						var new_window 	= 	window.open('https://github.com/login/oauth/authorize?scope=read:org&client_id='+$scope.config.clientId, '_blank')
 
 						new_window.focus()
 
@@ -113,16 +115,16 @@
 						$scope.adapters['github'].waitingForAuthorization = true
 
 						loginWithgithubInterval	=	window.setInterval(function(){
-												try{
-													if(new_window.authorizationComplete){
-														window.clearInterval(loginWithgithubInterval)
-														window.focus()
-														new_window.close()
-														$scope.getStats('github')
-														$scope.getLinks()
-													}
-												} catch(e) {}
-											}, 600)
+														try{
+															if(new_window.authorizationComplete){
+																window.clearInterval(loginWithgithubInterval)
+																window.focus()
+																new_window.close()
+																$scope.getStats('github')
+																$scope.getLinks()
+															}
+														} catch(e) {}
+													}, 600)
 					}
 
 					$scope.cancelLoginWithGithub = function(){
@@ -135,6 +137,7 @@
 
 					$scope.getLinks()
 
+					$scope.config = window.dp_config
 
 				}
 			])
@@ -203,6 +206,9 @@
 
 			.targets img {
 				float:				left;
+				width:				4rem;
+				height:				4rem;
+				margin-right:		1rem;
 			}
 
 			.targets h4 {
@@ -273,13 +279,14 @@
 					<h3>Github</h3>
 
 					<div ng-if = "!adapters.github.loading">
-						<a 
+
+						<div 
 							ng-if 		= "!adapters.github.data.user"
 							ng-click 	= "loginWithGithub()"
+							style		= "color:blue; cursor:pointer"
 						>
-							authorize github app
-						</a>
-
+							Authorize github app
+						</div>
 
 						<div 
 							ng-if = "adapters.github.data.user"
@@ -290,9 +297,15 @@
 							<h5>{{adapters.github.data.user.login}}</h5>
 						</div>
 
-						Select a repository to pipe annotations to:
+						<div ng-if ="!adapters.github.data.installations.length">
+							<a href = "https://github.com/apps/{{config.appName}}" target = "_blank"> Install/configure docloop for github </a>
+						</div>
+
 
 						<ul ng-if = "adapters.github.data.repos.length">
+							<li>
+								Select a repository to pipe annotations to:
+							</li>
 							<li
 								ng-repeat 	= "repo in adapters.github.data.repos"
 							>
@@ -311,7 +324,7 @@
 					</div>
 
 					<div ng-show = "adapters.github.waitingForAuthorization">
-						waiting for authorization... <br/>
+						Waiting for authorization... <br/>
 						(check new window/tab)
 						<button ng-click ="cancelLoginWithGithub()">cancel</button>
 					</div>

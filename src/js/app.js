@@ -10,6 +10,10 @@ var backend_url = dp_config.backendUrl
 			.config(function ($httpProvider) {
 				//$httpProvider.defaults.withCredentials = true;
 			})
+
+			.config(function(dpApiProvider){
+				dpApiProvider.setUrl('/')
+			})
 			.controller('adapterCtrl',[
 
 				'$scope',

@@ -14,7 +14,6 @@ angular.module("dpServices", [
 	
 	function($timeout, $q, dpApi){
 
-
 		function dpAdapter(data){
 			var self = this,
 				endpoint_guesses = []

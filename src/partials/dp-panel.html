@@ -1,0 +1,36 @@
+<div 
+	class 		= "logo" 
+	ng-class 	= "{'with-icon': !!dpIconClass}" 
+	style 		= "background-image: url({{dpImage || ''}}"
+>
+	<i ng-if ="dpIconClass" class = "fa {{dpIconClass}}"></i>
+</div>
+
+<div class = "content">
+	<div class = "title">
+		{{dpTitle}}
+	</div>
+
+	<div 
+		ng-if			= "transcludePresent('dpExtraLine')"
+		ng-transclude 	= "dpExtraLine"
+	>
+	</div>
+
+	<div class = "details">
+		{{dpDetails}}
+	</div>
+</div>
+
+<div 
+	class = "panel"
+>
+
+	<div class = "type">
+		{{dpLabel}}
+	</div>
+
+	<div class = "actions" ng-transclude>
+
+	</div>
+</div>

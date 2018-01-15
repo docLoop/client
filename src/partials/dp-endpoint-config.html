@@ -1,0 +1,218 @@
+<header>
+
+	<dp-select
+		dp-object 	= "dpEndpoint"
+		dp-property	= "adapter"
+		dp-options 	= "dp.adapters | filter : {type : dpType}" 
+	>
+		{{dpObject}}	
+
+		<dp-selected>
+			<dp-panel 
+				ng-show		= "dp.adapters.ready.$$state.status == 1 && $select.selected"
+				dp-label	= "{{dpType}} adapter"
+				dp-title	= "{{$select.selected.name}}"
+				dp-details	= "{{$select.selected.auth.user || 'public'}}"
+				dp-image	= "/images/{{$select.selected.id}}.png"
+				ng-click	= "$select.toggle()" 
+			>
+				<button 
+					ng-click = "$select.selected.refresh(); $event.stopPropagation()"
+				>
+					<i 
+						class 		= "fa fa-sync-alt fa-lg"
+						ng-class 	= "{'fa-spin': $select.selected.loading}"
+					></i>
+				</button>
+				<button ng-if = "$select.size > 0">
+					<i class = "fa fa-caret-down"></i>
+				</button>
+			</dp-panel>
+
+			<dp-panel 
+				ng-show			= "dp.adapters.ready.$$state.status == 1 && $select.size > 0"
+				dp-label		= "{{dpType}} adapter"
+				dp-title		= "Select {{dpType}} adapter"
+				dp-details		= ""
+				dp-icon-class	= "fa-caret-down"
+				ng-click		= "$select.toggle()" 
+			>
+			</dp-panel>
+
+			<dp-panel 
+				ng-show			= "dp.adapters.ready.$$state.status == 0"
+				dp-label		= "{{dpType}} adapter"
+				dp-title		= "loading..."
+				dp-details		= "please wait"
+				dp-icon-class	= "fa-circle-notch fa-spin"
+			>
+			</dp-panel>
+
+		</dp-selected>
+
+		<dp-options>
+			<dp-panel 
+				ng-repeat 	= "adapter in $select.options" 
+				dp-title	= "{{adapter.name}}"
+				dp-details	= "{{adapter.auth.user || 'public'}}"	
+				dp-image	= "/images/{{adapter.id}}.png"
+				ng-click	= "$select.selected = adapter;  $select.close()"
+				ng-if		= "$select.selected != adapter"
+			>
+			</dp-panel>
+		</dp-options>
+
+	</dp-select>
+
+</header>	
+
+<section ng-if = "dpEndpoint.adapter">
+
+	<dp-select
+		dp-object			= "dpEndpoint"
+		dp-property			= "identifier" 
+		dp-options 			= "dpEndpoint.adapter.endpoints"
+	>
+		<dp-selected>
+			<dp-panel
+				ng-show			= "!dpEndpoint.adapter.loading && $select.selected"
+				dp-label		= "{{dpType}}"
+				dp-title		= "{{ ($select.selected | dpDecor).title}}"
+				dp-details		= "{{ ($select.selected | dpDecor).details}}"
+				dp-image		= "{{ ($select.selected | dpDecor).image || '/images/'+dpEndpoint.adapter.id+'.png'}}"
+				ng-click		= "$select.toggle()"
+			>
+				<button ng-if = "$select.size > 0">
+					<i class = "fa fa-caret-down">
+					</i>
+				</button>
+			</dp-panel>
+
+			<dp-panel
+				ng-show			= "!dpEndpoint.adapter.loading && !$select.selected && $select.size > 0"
+				dp-label		= "{{dpType}}"
+				dp-title		= "Select {{dpType}}"
+				dp-details		= ""
+				dp-icon-class	= "fa-caret-down"
+				ng-click		= "$select.toggle()"
+			>
+			</dp-panel>
+
+			<dp-panel 
+				ng-show			= "dpEndpoint.adapter.loading"
+				dp-label		= "{{dpType}}"
+				dp-title		= "loading..."
+				dp-details		= "please wait"
+				dp-icon-class	= "fa-circle-notch fa-spin"
+			>
+			</dp-panel>
+
+			<dp-panel 
+				ng-show			= "!dpEndpoint.adapter.loading && $select.size == 0"
+				dp-label		= "{{dpType}}"
+				dp-title		= "no endpoints found"
+				dp-details		= "maybe you haven't authorized docloop yet"
+				dp-icon-class	= "fa-ban"
+			>
+			</dp-panel>
+
+		</dp-selected>
+
+
+		<dp-options>
+			<dp-panel
+				ng-repeat 		= "endpoint in $select.options"
+				dp-title		= "{{endpoint.decor.title}}"
+				dp-details		= "{{endpoint.decor.details}}"
+				dp-image		= "{{endpoint.decor.image || '/images/'+dpEndpoint.adapter.id+'.png'}}"
+				ng-click		= "$select.selected = endpoint.identifier; $select.close()"
+				ng-if			= "!($select.selected | equals : endpoint.identifier)"
+			>
+			</dp-panel>
+
+		
+			<dp-panel
+				ng-if				= "dpEndpoint.adapter.extraEndpoints"
+				dp-title			= ""
+				dp-details			= "Enter url {{ dpEndpoint.guessFailed ? '(failed)' : ''}}"
+				dp-label			= ""
+				dp-icon-class		= "fa-keyboard"
+				dp-style			= "rows"
+				title				= "{{ dpEndpoint.guessFailed ? 'retry' : 'guess'}}"
+			>
+
+				<dp-extra-line> 
+					<form 
+						ng-submit = "dpEndpoint.guess(guess)"
+						class = "input-line"
+					>
+						<input 
+							type 		= "text" 
+							ng-model	= "guess"
+							ng-change 	= "dpEndpoint.guessFailed = false; dpEndpoint.guessSuccessful = false"
+							ng-disabled	= "dpEndpoint.guessing"
+							ng-class	= "{success: dpEndpoint.guessSuccessful, fail: dpEndpoint.guessFailed}"
+							onClick		= "this.select()"
+						/>
+						<button 
+							type		= "submit"
+							ng-disabled	= "dpEndpoint.guessing"
+						>
+							<i 	
+								class 		= 	"fa"
+								ng-class 	= 	"{
+													'fa-circle-notch fa-spin':	 dpEndpoint.guessing,
+													'fa-check':					!dpEndpoint.guessing	&&	 dpEndpoint.guessSuccessful,
+													'fa-exclamation-triangle':	!dpEndpoint.guessing	&&	 dpEndpoint.guessFailed,
+													'fa-search':				!dpEndpoint.guessing	&&	!dpEndpoint.guessFailed && !dpEndpoint.guessSuccessful
+												}"
+							>
+							</i>
+						</button>
+					</form>
+				</dp-extra-line>
+			</dp-panel>
+		</dp-options>
+
+	</dp-select>
+
+</section>
+
+
+<section 
+	ng-if = "dpEndpoint.adapter.auth.link && !dpEndpoint.adapter.auth.user"
+	class = "info"
+>
+	<a ng-href = "{{dpEndpoint.adapter.auth.link}}">
+		<i class = "fa fa-lock"></i> Authorize docloop to access your {{dpEndpoint.adapter.name}} account.
+	</a>	
+</section>
+
+
+<section 
+	ng-if = "!(dpEndpoint.adapter.endpointDefaultConfig | isEmpty)"
+	class = "config"
+>
+	<fieldset>
+		<legend><i class ="fa fa-cog"></i> Config</legend>
+		<label
+			ng-repeat 	= "(key, value) in dpEndpoint.adapter.endpointDefaultConfig"
+			ng-click = "(dpEndpoint.config[key] | isBoolean) && (dpEndpoint.config[key] = !dpEndpoint.config[key])"
+		>
+			<div>{{key}}</div>
+			<div>
+				<input 
+					ng-if 		= "dpEndpoint.config[key] | isString "
+					type 		= "text" 
+					ng-model 	= "dpEndpoint.config[key]"
+				/>
+				<i
+					ng-if 		= "dpEndpoint.config[key] | isBoolean "
+					class		= "fa fa-fw fa-lg"
+					ng-class	= "{'fa-check-square': !!dpEndpoint.config[key] , 'fa-square': !dpEndpoint.config[key]}"
+				>
+				</i>
+			</div>
+		</label>
+	</fieldset>
+</section>

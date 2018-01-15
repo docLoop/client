@@ -1,0 +1,18 @@
+
+	<dp-endpoint dp-endpoint = "dpLink.source"></dp-endpoint>
+	
+	<div class = "controls"
+	>	
+		<button 
+			title 		= "edit link" 		
+			ng-click  	= "dp.links.active = dpLink"
+			ng-class	= "{'active':dpLink.id == dp.links.active.id}"
+		>	
+			<i class ="fa fa-pencil-alt fa-lg"></i>	
+		</button>		
+	</div>
+
+
+	<dp-endpoint dp-endpoint = "dpLink.target"></dp-endpoint>
+
+

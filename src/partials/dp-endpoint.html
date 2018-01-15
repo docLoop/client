@@ -1,0 +1,18 @@
+
+	<dp-panel
+		class			= "clip right"
+		dp-title		= "{{dpEndpoint.adapter.name}}"
+		dp-details		= "{{dpEndpoint.adapter.auth.user || 'public'}}"
+		dp-image		= "{{'/images/'+dpEndpoint.identifier.adapter+'.png'}}"
+	>
+	</dp-panel>
+
+	</div>
+
+	<dp-panel
+		class			= "clip"
+		dp-title		= "{{ (dpEndpoint.identifier | dpDecor).title}}"
+		dp-details		= "{{ (dpEndpoint.identifier | dpDecor).details}}"
+		dp-image		= "{{ (dpEndpoint.identifier | dpDecor).image || '/images/'+dpEndpoint.identifier.adapter+'.png'}}"
+	>
+	</dp-panel>

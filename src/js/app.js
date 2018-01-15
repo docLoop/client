@@ -12,7 +12,7 @@ var backend_url = dp_config.backendUrl
 			})
 
 			.config(function(dpApiProvider){
-				dpApiProvider.setUrl('/')
+				dpApiProvider.setUrl('')
 			})
 			.controller('adapterCtrl',[
 

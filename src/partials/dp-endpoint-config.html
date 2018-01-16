@@ -180,10 +180,10 @@
 
 
 <section 
-	ng-if = "dpEndpoint.adapter.auth.link && !dpEndpoint.adapter.auth.user"
+	ng-if = "dpEndpoint.adapter.auth.url && !dpEndpoint.adapter.auth.user"
 	class = "info"
 >
-	<a ng-href = "{{dpEndpoint.adapter.auth.link}}">
+	<a ng-href = "{{dpEndpoint.adapter.auth.url}}">
 		<i class = "fa fa-lock"></i> Authorize docloop to access your {{dpEndpoint.adapter.name}} account.
 	</a>	
 </section>

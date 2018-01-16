@@ -108,12 +108,12 @@
 			</dp-panel>
 
 			<dp-panel 
-				ng-show			= "!dpEndpoint.adapter.loading && $select.size == 0"
+				ng-show			= "!dpEndpoint.adapter.loading && $select.size == 0 && $select.options.length == 0"
 				dp-label		= "{{dpType}}"
 				dp-title		= "no endpoints found"
 				dp-details		= "maybe you haven't authorized docloop yet"
 				dp-icon-class	= "fa-ban"
-			>
+			> 
 			</dp-panel>
 
 		</dp-selected>
@@ -129,6 +129,8 @@
 				ng-if			= "!($select.selected | equals : endpoint.identifier)"
 			>
 			</dp-panel>
+
+			x<!-- hide selected endpoint if its not in options? -->
 
 		
 			<dp-panel

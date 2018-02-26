@@ -17,7 +17,8 @@ angular.module("dpDirectives", [
 							},
 
 			link: function(scope){
-				scope.dp = dp
+				scope.dp 	= dp
+				scope.show 	= {}
 			}
 		}
 	}
@@ -130,7 +131,7 @@ angular.module("dpDirectives", [
 				}
 
 				Object.defineProperty(scope.$select, 'size', {
-			 		get: () => element.find('dp-options').children().length
+			 		get: () => element.find('dp-options').children().length 
 				})
 
 
@@ -180,13 +181,13 @@ angular.module("dpDirectives", [
 				)
 
 				scope.$watch('$select.selected', ()	=> {
-
+					
 					scope.$select.object[attrs.dpProperty] = scope.$select.selected
 
 					element.find('dp-selected').addClass('changed')
 
 					clearTimeout(change_to)
-					change_to = setTimeout( () => element.find('dp-selected').removeClass('changed'), 1000 )
+					change_to = setTimeout( () => element.find('dp-selected').removeClass('changed'), 800 )
 
 				})
 
@@ -374,6 +375,33 @@ angular.module("dpDirectives", [
 		return delayCahnges
 	}
 
+])
+
+.filter('linkify',[
+
+	'$sce', 
+
+	function($sce){
+		return function(str){
+			return 	$sce.trustAsHtml(
+						str
+						.replace(/<[^>]+>/g, '')
+						.replace(/(https?:\/\/[^\s]*)/, '<a href="$&">$&</a>')
+					)
+		}
+	}
+
+])
+
+
+.filter('trustAsHtml',[
+	'$sce',
+
+	function($sce){
+		return function(html){
+			return $sce.trustAsHtml(html)
+		}
+	}
 ])
 
 .filter('isEmpty', [

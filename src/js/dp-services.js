@@ -46,6 +46,7 @@ angular.module("dpServices", [
 				return self.ready
 			}
 
+
 			self.guessing = 0
 
 
@@ -473,13 +474,35 @@ angular.module("dpServices", [
 	'$rootScope',
 	'dpAdapters',
 	'dpLinks',
+	'dpApi',
 
-	function($rootScope, dpAdapters, dpLinks){
+	function($rootScope, dpAdapters, dpLinks, dpApi){
 
 		var dp = this
 
-		dp.adapters 	= dpAdapters
-		dp.links		= dpLinks
+		dp.adapters 	= 	dpAdapters
+		dp.links		= 	dpLinks
+
+		dp.signOff		= 	function(adapter_id){
+								dpApi.signOff(adapter_id)
+								.then( () => {
+									dp.adapters.get(adapter_id)
+									.clearEndpoints()
+									.refresh()	
+
+
+									if(dp.links.active.source.identifier && dp.links.active.source.identifier.adapter == adapter_id) dp.links.active.source.identifier = null
+									if(dp.links.active.target.identifier && dp.links.active.target.identifier.adapter == adapter_id) dp.links.active.target.identifier = null
+
+
+									console.log(dp.links.active.target.identifier)
+
+									dp.links.storeActiveLink()
+
+									dp.links.refresh()
+								})
+
+							}
 
 	}
 

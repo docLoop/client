@@ -70,6 +70,10 @@ angular.module("dpApi", [])
 						.then(function(result){ return result ? result.data : [] })
 			}
 
+			this.signOff = function(adapter_id){
+				return 	$http.post(backend_url+'/adapters/'+adapter_id+'/signoff')
+			}
+
 			
 			this.validateEndpoint = function(adapter_id, endpoint){
 				return	$http.post(backend_url+'/validateEndpoint', endpoint)

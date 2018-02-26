@@ -1,3 +1,4 @@
+
 <header>
 
 	<dp-select
@@ -5,7 +6,6 @@
 		dp-property	= "adapter"
 		dp-options 	= "dp.adapters | filter : {type : dpType}" 
 	>
-		{{dpObject}}	
 
 		<dp-selected>
 			<dp-panel 
@@ -17,20 +17,45 @@
 				ng-click	= "$select.toggle()" 
 			>
 				<button 
+					ng-click = "show.help = !show.help; $event.stopPropagation()"
+					title		= "Help"
+					ng-class	= "{'pulse' : $select.selected.endpoints.length == 0 && !show.help}"
+					ng-if		= "$select.selected.help"
+				>
+					<i 
+						class 		= "far fa-question-circle fa-lg"
+					></i>
+				</button>
+
+				<button 
+					ng-click 	= "dp.signOff($select.selected.id); $event.stopPropagation()"
+					title		= "Revoke authorization for {{$select.selected.auth.user}}"
+					ng-if		= "$select.selected.auth.user"
+				>
+					<i 
+						class 		= "fa fa-power-off fa-lg"
+					></i>
+				</button>
+
+
+				<button 
 					ng-click = "$select.selected.refresh(); $event.stopPropagation()"
+					title	 = "Refresh"
 				>
 					<i 
 						class 		= "fa fa-sync-alt fa-lg"
 						ng-class 	= "{'fa-spin': $select.selected.loading}"
 					></i>
 				</button>
+
+
 				<button ng-if = "$select.size > 0">
 					<i class = "fa fa-caret-down"></i>
 				</button>
 			</dp-panel>
 
 			<dp-panel 
-				ng-show			= "dp.adapters.ready.$$state.status == 1 && $select.size > 0"
+				ng-show			= "dp.adapters.ready.$$state.status == 1 && !$select.selected && $select.size > 0"
 				dp-label		= "{{dpType}} adapter"
 				dp-title		= "Select {{dpType}} adapter"
 				dp-details		= ""
@@ -66,7 +91,7 @@
 
 </header>	
 
-<section ng-if = "dpEndpoint.adapter">
+<section ng-if = "dpEndpoint.adapter && !show.help">
 
 	<dp-select
 		dp-object			= "dpEndpoint"
@@ -108,7 +133,7 @@
 			</dp-panel>
 
 			<dp-panel 
-				ng-show			= "!dpEndpoint.adapter.loading && $select.size == 0 && $select.options.length == 0"
+				ng-show			= "!dpEndpoint.adapter.loading && $select.size == 0"
 				dp-label		= "{{dpType}}"
 				dp-title		= "no endpoints found"
 				dp-details		= "maybe you haven't authorized docloop yet"
@@ -181,6 +206,16 @@
 </section>
 
 
+<section class = "help" ng-if = "dpEndpoint.adapter && show.help">
+	<header class  = "flex">
+		<i class = "far fa-question-circle fa-lg"></i>
+		<div class = "flex-space"></div>
+		<button ng-click = "show.help = false"><i class = "fa fa-times fa -lg"></i></button>
+	</header>
+	<article class  = "pre-line" ng-bind-html ="dpEndpoint.adapter.help | linkify">	</article>
+</section>
+
+
 <section 
 	ng-if = "dpEndpoint.adapter.auth.url && !dpEndpoint.adapter.auth.user"
 	class = "info"
@@ -192,7 +227,7 @@
 
 
 <section 
-	ng-if = "!(dpEndpoint.adapter.endpointDefaultConfig | isEmpty)"
+	ng-if = "!show.help && !(dpEndpoint.adapter.endpointDefaultConfig | isEmpty)"
 	class = "config"
 >
 	<fieldset>

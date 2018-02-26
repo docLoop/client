@@ -698,7 +698,11 @@ dp-link:hover .controls button {
 
 
 @keyframes pulse {
-	0%{transform:			scale(1) rotate(0deg);	}
+	0%	{transform:			scale(1) rotate(0deg);	}
+
+	34% {transform:			scale(1) rotate(0deg);	}
+
+	35% {transform:			scale(1.5) rotate(0deg);	}
 
 	36%	{transform:			scale(1.4) rotate(10deg);	}
 
@@ -716,7 +720,7 @@ dp-link:hover .controls button {
 
 	48%	{transform:			scale(1.4) rotate(10deg);	}
 
-	60%	{transform:			scale(1) rotate(0deg);	}
+	50%	{transform:			scale(1) rotate(0deg);	}
 
 }
 

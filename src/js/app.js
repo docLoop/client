@@ -14,52 +14,52 @@ var backend_url = dp_config.backendUrl
 			.config(function(dpApiProvider){
 				dpApiProvider.setUrl('')
 			})
-			.controller('adapterCtrl',[
+			// .controller('adapterCtrl',[
 
-				'$scope',
-				'dpAdapters',
-				'dpLink',
+			// 	'$scope',
+			// 	'dpAdapters',
+			// 	'dpLink',
 
-				function($scope, dpAdapters, dpLink){
-					$scope.dpAdapters = dpAdapters.data
+			// 	function($scope, dpAdapters, dpLink){
+			// 		$scope.dpAdapters = dpAdapters.data
 
-					$scope.dpLink = dpLink
-				}
+			// 		$scope.dpLink = dpLink
+			// 	}
 
-			])
-			.controller('linkCtrl', [
-				'$scope',
-				'dpLink',
-				'$http',
+			// ])
+			// .controller('linkCtrl', [
+			// 	'$scope',
+			// 	'dpLink',
+			// 	'$http',
 
-				function($scope, dpLink, $http){
-					$scope.dpLink = dpLink
+			// 	function($scope, dpLink, $http){
+			// 		$scope.dpLink = dpLink
 
-					$scope.guessPaperhiveSource = function(str){
-						var matches 	= 	str.match(/.*paperhive\.org.*\/documents\/([^\/]+)/),
-							document_id =	(matches && matches[1]) || str,
-							result		= 	{repo:{}, identifier: {} }
+			// 		$scope.guessPaperhiveSource = function(str){
+			// 			var matches 	= 	str.match(/.*paperhive\.org.*\/documents\/([^\/]+)/),
+			// 				document_id =	(matches && matches[1]) || str,
+			// 				result		= 	{repo:{}, identifier: {} }
 
-						result.repo 		=	{
-													name: document_id,
-													owner: {login: 'public'}
-												}
-						result.identifier 	= 	{
-													identifier: { 
-														adapter:		'paperhive',
-														document_id:	document_id
-													}
-												}
+			// 			result.repo 		=	{
+			// 										name: document_id,
+			// 										owner: {login: 'public'}
+			// 									}
+			// 			result.identifier 	= 	{
+			// 										identifier: { 
+			// 											adapter:		'paperhive',
+			// 											document_id:	document_id
+			// 										}
+			// 									}
 
-						$http.get('https://paperhive.org/api/documents/'+document_id)
-						.then(function(res){
-							result.repo.name = res.data.title
-						})
+			// 			$http.get('https://paperhive.org/api/documents/'+document_id)
+			// 			.then(function(res){
+			// 				result.repo.name = res.data.title
+			// 			})
 
-						return 	result
-					}
-				}
-			])
+			// 			return 	result
+			// 		}
+			// 	}
+			// ])
 			.run([
 				'$rootScope',
 				'dp',

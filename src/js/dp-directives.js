@@ -267,7 +267,6 @@ angular.module("dpDirectives", [
 					while(c && c != element[0]){ c = c.parentElement }
 
 					if(!c){	
-						console.log('click outside', attrs.dpClickOutside)
 						scope.$eval(attrs.dpClickOutside)
 						scope.$digest()
 					}

@@ -693,30 +693,30 @@ dp-link:hover .controls button {
 
 
 .pulse {
-	animation:				pulse 5s ease-in infinite;
+	animation:				pulse 5s linear infinite;
 }
 
 
 @keyframes pulse {
 	0%{transform:			scale(1) rotate(0deg);	}
 
-	6%	{transform:			scale(1.4) rotate(10deg);	}
+	36%	{transform:			scale(1.4) rotate(10deg);	}
 
-	8%	{transform:			scale(1.4) rotate(-10deg);	}
+	38%	{transform:			scale(1.4) rotate(-10deg);	}
 
-	10%	{transform:			scale(1.4) rotate(10deg);	}
+	40%	{transform:			scale(1.4) rotate(10deg);	}
 
-	12%	{transform:			scale(1.4) rotate(-10deg);	}
+	42%	{transform:			scale(1.4) rotate(-10deg);	}
 	
-	14%	{transform:			scale(1.4) rotate(10deg);	}
+	44%	{transform:			scale(1.4) rotate(10deg);	}
 
-	16%	{transform:			scale(1.4) rotate(10deg);	}
+	46%	{transform:			scale(1.4) rotate(10deg);	}
 
-	16%	{transform:			scale(1.4) rotate(-10deg);	}
+	46%	{transform:			scale(1.4) rotate(-10deg);	}
 
-	18%	{transform:			scale(1.4) rotate(10deg);	}
+	48%	{transform:			scale(1.4) rotate(10deg);	}
 
-	30%	{transform:			scale(1) rotate(0deg);	}
+	60%	{transform:			scale(1) rotate(0deg);	}
 
 }
 

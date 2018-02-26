@@ -490,16 +490,22 @@ angular.module("dpServices", [
 									.clearEndpoints()
 									.refresh()	
 
+									var source_affected 	= dp.links.active.source.identifier && dp.links.active.source.identifier.adapter == adapter_id,
+										target_affected 	= dp.links.active.target.identifier && dp.links.active.target.identifier.adapter == adapter_id,
+										link_affected		= source_affected || target_affected
 
-									if(dp.links.active.source.identifier && dp.links.active.source.identifier.adapter == adapter_id) dp.links.active.source.identifier = null
-									if(dp.links.active.target.identifier && dp.links.active.target.identifier.adapter == adapter_id) dp.links.active.target.identifier = null
+									if(!link_affected) return dp.links.refresh()
 
+									if(!dp.links.active.id){
+										if(source_affected) dp.links.active.source.identifier = null
+										if(target_affected) dp.links.active.target.identifier = null
+										dp.links.storeActiveLink()
+									}	
 
-									console.log(dp.links.active.target.identifier)
-
-									dp.links.storeActiveLink()
 
 									dp.links.refresh()
+									.then( () => dp.links.active.id && !dp.links.get() && dp.links.newLink() )	
+
 								})
 
 							}

@@ -8,11 +8,11 @@ var backend_url = dp_config.backendUrl
 				'dpDirectives',
 			])
 			.config(function ($httpProvider) {
-				//$httpProvider.defaults.withCredentials = true;
+				$httpProvider.defaults.withCredentials = true;
 			})
 
 			.config(function(dpApiProvider){
-				dpApiProvider.setUrl('')
+				dpApiProvider.setUrl(backend_url)
 			})
 			// .controller('adapterCtrl',[
 

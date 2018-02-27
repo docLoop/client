@@ -419,6 +419,7 @@ dp-endpoint-config section {
 
 
 dp-panel {
+	display:					block;
 	position:					relative;
 	box-sizing:					border-box;
 	height:						5em;

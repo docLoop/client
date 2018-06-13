@@ -319,7 +319,7 @@ dp-endpoint-config {
 	padding:					2rem !important;
 	min-width:					20rem;
 	max-width:					30rem;
-	overflow-x:					hidden;
+	overflow:					visible;
 	min-height:					35rem;
 
 }
